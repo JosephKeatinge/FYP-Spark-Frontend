@@ -1,4 +1,4 @@
 /server/spark-server/
-/server/__pycache__/
+/server/app/__pycache__/
 /spark-system/hdfs-backups/
 /backend-server-env
