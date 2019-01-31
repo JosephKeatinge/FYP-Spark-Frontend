@@ -3,4 +3,4 @@
 /spark-system/hdfs-backups/
 /backend-server-env
 .env
-/spark-system/script-output
+/spark-system/script-output/
