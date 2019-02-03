@@ -5,13 +5,9 @@ file_uri = "hdfs://localhost:9000/datasets/%s" % (str(sys.argv[1]))
 
 spark = SparkSession.builder.appName("BasicApp").getOrCreate()
 
-df = spark.read.csv(file_uri)
+df = spark.read.option("header", "true").csv(file_uri)
 
-df.write.json("hdfs://localhost:9000/output/print-df/%s" % (str(sys.argv[1])))
-
-"""newColumns = [str(df.head()[col]) for col in df.columns]
-oldColumns = df.columns
-
-newDf = reduce(lambda df, idx: df.withColumnRenamed(oldColumns[idx], newColumns[idx]), xrange(len(oldColumns)), df)"""
+#df.write.json("hdfs://localhost:9000/output/print-df/df1")
+df.write.mode("overwrite").json("script-output/print-df/%s" % str(sys.argv[1]))
 
 spark.stop()
