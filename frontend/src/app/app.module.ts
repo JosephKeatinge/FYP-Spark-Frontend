@@ -1,20 +1,33 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from "@angular/common/http";
-import { MatTableModule } from "@angular/material/table";
-
+import { RouterModule, Routes } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 
+import { FetchTableService } from './fetch-table.service';
+import { ShowDatasetComponent } from './show-dataset/show-dataset.component';
+
+const appRoutes: Routes = [
+  { path: 'dataset/:ds',
+    component: ShowDatasetComponent,
+    data: { dataset: '{{ds}}' } },
+  { path: '', component: AppComponent },
+  { path: '**', component: AppComponent }
+];
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ShowDatasetComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    MatTableModule
+    RouterModule.forRoot(
+      appRoutes,
+      { enableTracing: false },
+    ),
   ],
-  providers: [],
+  providers: [FetchTableService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
