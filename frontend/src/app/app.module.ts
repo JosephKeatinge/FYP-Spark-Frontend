@@ -3,29 +3,19 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
+import { AppRoutingModule, routingComponents } from './app-routing.module';
 
 import { FetchTableService } from './fetch-table.service';
-import { ShowDatasetComponent } from './show-dataset/show-dataset.component';
 
-const appRoutes: Routes = [
-  { path: 'dataset/:ds',
-    component: ShowDatasetComponent,
-    data: { dataset: '{{ds}}' } },
-  { path: '', component: AppComponent },
-  { path: '**', component: AppComponent }
-];
 @NgModule({
   declarations: [
     AppComponent,
-    ShowDatasetComponent,
+    routingComponents,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule.forRoot(
-      appRoutes,
-      { enableTracing: false },
-    ),
+    AppRoutingModule,
   ],
   providers: [FetchTableService],
   bootstrap: [AppComponent]

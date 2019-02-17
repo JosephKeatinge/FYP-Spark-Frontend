@@ -3,12 +3,12 @@
   <h1>
     Select a dataset to work with:
   </h1>
-  <ul>
-    <li *ngFor="let ds of datasets">
-      <a [routerLink]="[ '/dataset', ds ]">{{ds}}</a>
-    </li>
-  </ul>
+  <nav *ngFor="let ds of datasets">
+    <div (click)="onSelect(ds)">{{ds}}</div>
+  </nav>
 </div>
+<router-outlet></router-outlet>
+
 
 
 

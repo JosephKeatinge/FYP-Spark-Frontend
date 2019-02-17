@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -11,13 +12,20 @@ export class AppComponent implements OnInit {
   targetUrl = 'http://127.0.0.1:5000/datasets';
   datasets = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router
+    ) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.getDatasets();
   }
 
-  getDatasets(): void {
+  public onSelect(ds): void {
+    this.router.navigate(['/dataset', ds]);
+  }
+
+  public getDatasets(): void {
     this.http.get(this.targetUrl).subscribe(data => {
       this.datasets = data['data'];
     });
