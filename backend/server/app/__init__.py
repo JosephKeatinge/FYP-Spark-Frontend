@@ -26,20 +26,31 @@ class DFHead(Resource):
     # Returns the first ten lines of a chosen dataset
     def get(self, identifier):
         self.runSparkScipt(identifier)
-        filepath = ("script-output/print-df/%s/*.json" %identifier)
-        txt = glob.glob(filepath)
-        data = []
+        #filepath = ("script-output/print-df/%s/*.json" %identifier)
+        #txt = glob.glob(filepath)
+
+        columns = self.getColumns(identifier)
+        data = {"id": identifier, "columns": columns}
         i = 0
+        rows = []
+        txt = ["/home/jsk1/datasets/youtube.csv"]
         for textfile in txt:
-            print("path: ", textfile)
             f = open(textfile, 'r')
-            rows = f.read()
-            for line in rows.split("\n"):
-                if i < 10:
-                    data.append(line)
-                    i += 1
-                else:
-                    return {"data" : data}, 200
+            values = f.read()
+            lines = values.split("\n")
+            rows = lines[1:11]
+            data["rows"] = rows
+            return data, 200
+
+    def getColumns(self, dataset):
+        try:
+            # Get first line of csv containing column names
+            f = open("/home/jsk1/datasets/%s" % str(dataset))
+            cols = f.read().split("\n")[0]
+            columns = cols.split(',')
+            return columns
+        except FileNotFoundError:
+            return []
         
         
 

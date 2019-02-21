@@ -14,9 +14,6 @@ hadoop_dir=$2
 
 ${SPARK_HOME}/sbin/start-master.sh
 ${SPARK_HOME}/sbin/start-slave.sh ${master_url}
-${SPARK_HOME}/sbin/start-slave.sh ${master_url}
-${SPARK_HOME}/sbin/start-slave.sh ${master_url}
-${SPARK_HOME}/sbin/start-slave.sh ${master_url}
 
 hdfs dfs -mkdir /datasets
 hdfs dfs -put ~/datasets/* /datasets

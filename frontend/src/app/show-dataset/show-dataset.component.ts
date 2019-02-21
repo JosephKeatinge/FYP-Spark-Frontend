@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { stringify } from '@angular/core/src/util';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
+interface Dataset {
+  id?: String;
+  columns: String[];
+  rows: Object[];
+}
 
 @Component({
   selector: 'app-show-dataset',
@@ -12,7 +18,9 @@ import { stringify } from '@angular/core/src/util';
 
 export class ShowDatasetComponent implements OnInit {
   apiPath: string;
-  data = [];
+  id: String;
+  cols: String[];
+  dataRows: Object[];
 
   constructor(
     private http: HttpClient,
@@ -22,17 +30,15 @@ export class ShowDatasetComponent implements OnInit {
   public ngOnInit() {
     const id = this.route.snapshot.paramMap.get('ds');
     this.apiPath = 'http://127.0.0.1:5000/dataset/'.concat(id);
-    console.log(this.apiPath);
     this.getDatasetHead();
   }
 
   public getDatasetHead(): void {
-    this.http.get(this.apiPath).subscribe(data => {
-      this.data = data['data'];
+    this.http.get<Dataset>(this.apiPath).subscribe((data: Dataset) => {
+      this.id = data.id;
+      this.cols = data.columns;
+      this.dataRows = data.rows;
+      console.log(data.rows);
     });
-    let i: number;
-    for (i = 0; i < this.data.length; i++) {
-      console.log(this.data[i]);
-    }
   }
 }
