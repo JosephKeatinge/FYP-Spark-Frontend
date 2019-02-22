@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
+import { DataService } from './services/data.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -10,10 +12,10 @@ import { Router } from '@angular/router';
 
 export class AppComponent implements OnInit {
   targetUrl = 'http://127.0.0.1:5000/datasets';
-  datasets = [];
+  datasets: any[];
 
   constructor(
-    private http: HttpClient,
+    private dataService: DataService,
     private router: Router
     ) {}
 
@@ -26,8 +28,9 @@ export class AppComponent implements OnInit {
   }
 
   public getDatasets(): void {
-    this.http.get(this.targetUrl).subscribe(data => {
-      this.datasets = data['data'];
+    this.dataService.getDatasetList().subscribe(res => {
+      console.log(res);
+      this.datasets = res.datasets;
     });
   }
 }

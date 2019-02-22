@@ -1,4 +1,4 @@
-from flask import Flask, g
+from flask import Flask, g, json
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 from subprocess import Popen, PIPE
@@ -12,6 +12,14 @@ api = Api(app)
 class DFList(Resource):
     # Returns a list of all datasets available for processing
     def get(self):
+        data = {"datasets": ["youtube.csv"]}
+        response = app.response_class(
+            response=json.dumps(data),
+            mimetype='application/json'
+        )
+        return response 
+
+    def getNot(self, fluff):
         p1 = Popen(['hdfs', 'dfs', '-ls', '/datasets'], stdout=PIPE, stderr=PIPE)
         # Regex to get just the filenames out of the output
         p2 = Popen(["grep", "-oh" ,"\w*.csv"], stdin=p1.stdout, stdout=PIPE, stderr=PIPE)
@@ -25,27 +33,34 @@ class DFList(Resource):
 class DFHead(Resource):
     # Returns the first ten lines of a chosen dataset
     def get(self, identifier):
-        self.runSparkScipt(identifier)
+        #self.runSparkScipt(identifier)
         #filepath = ("script-output/print-df/%s/*.json" %identifier)
         #txt = glob.glob(filepath)
 
+        id = str(identifier)
         columns = self.getColumns(identifier)
-        data = {"id": identifier, "columns": columns}
-        i = 0
-        rows = []
-        txt = ["/home/jsk1/datasets/youtube.csv"]
+        txt = [("%s/datasets/youtube.csv" % os.environ['HOME'])]
         for textfile in txt:
             f = open(textfile, 'r')
             values = f.read()
             lines = values.split("\n")
-            rows = lines[1:11]
-            data["rows"] = rows
-            return data, 200
+            lines = lines[1:11]
+            rows = []
+            for ln in lines:
+                rows += [ln.split(",")]
+        data = {"id": id,
+                "columns": columns,
+                "rows": rows}
+        response = app.response_class(
+            response=json.dumps(data),
+            mimetype='application/json'
+        )
+        return response 
 
     def getColumns(self, dataset):
         try:
             # Get first line of csv containing column names
-            f = open("/home/jsk1/datasets/%s" % str(dataset))
+            f = open("%s/datasets/%s" % (os.environ['HOME'], str(dataset)))
             cols = f.read().split("\n")[0]
             columns = cols.split(',')
             return columns

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-
+// import { MatPaginator, MatTableDataSource } from '@angular/material';
+import { DataService } from '../services/data.service';
+import { StaticInjector } from '@angular/core/src/di/injector';
 interface Dataset {
-  id?: String;
-  columns: String[];
-  rows: Object[];
+  id?: string;
+  columns: string[];
+  rows: string[];
 }
 
 @Component({
@@ -18,27 +18,26 @@ interface Dataset {
 
 export class ShowDatasetComponent implements OnInit {
   apiPath: string;
-  id: String;
-  cols: String[];
-  dataRows: Object[];
+  id: string;
+  cols: string[];
+  dataRows: string[];
 
   constructor(
-    private http: HttpClient,
+    private dataService: DataService,
     private route: ActivatedRoute,
   ) {}
 
   public ngOnInit() {
     const id = this.route.snapshot.paramMap.get('ds');
     this.apiPath = 'http://127.0.0.1:5000/dataset/'.concat(id);
-    this.getDatasetHead();
+    this.getDatasetHead(id);
   }
 
-  public getDatasetHead(): void {
-    this.http.get<Dataset>(this.apiPath).subscribe((data: Dataset) => {
-      this.id = data.id;
-      this.cols = data.columns;
-      this.dataRows = data.rows;
-      console.log(data.rows);
+  public getDatasetHead(id: string): void {
+    this.dataService.getDataset(id).subscribe(res => {
+      this.id = res.id;
+      this.cols = res.columns;
     });
+    // console.log(this.dataRows);
   }
 }

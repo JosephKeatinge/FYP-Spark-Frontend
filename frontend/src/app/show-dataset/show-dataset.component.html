@@ -1,4 +1,10 @@
-<ul>
-    <li *ngFor="let row of dataRows">{{row}}</li>
-</ul>
-<p>{{id}}</p>
+<div class="display-table">
+    <table>
+        <tr>
+            <th *ngFor="let col of cols">{{col}}</th>
+        </tr>
+        <tr *ngFor="let row of dataRows">
+            <td>{{row}}</td>
+        </tr>
+    </table>
+</div>
