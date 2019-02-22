@@ -1,0 +1,13 @@
+.command-bar{
+    padding: 5px;
+}
+
+.nav-bar{
+    display: inline;
+    padding: 5px;
+}
+
+.nav-option{
+    display: inline;
+    padding: 3px;
+}

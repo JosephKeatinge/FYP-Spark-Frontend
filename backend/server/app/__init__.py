@@ -11,43 +11,55 @@ api = Api(app)
 
 class DFList(Resource):
     # Returns a list of all datasets available for processing
-    def get(self):
+    """def getNot(self):
         data = {"datasets": ["youtube.csv"]}
         response = app.response_class(
             response=json.dumps(data),
             mimetype='application/json'
         )
-        return response 
+        return response """
 
-    def getNot(self, fluff):
+    def get(self):
         p1 = Popen(['hdfs', 'dfs', '-ls', '/datasets'], stdout=PIPE, stderr=PIPE)
         # Regex to get just the filenames out of the output
         p2 = Popen(["grep", "-oh" ,"\w*.csv"], stdin=p1.stdout, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p2.communicate()
         datasets = stdout.decode("utf-8").split("\n")
         # Remove empty string from end of list
-        datasets = datasets[:len(datasets)-1]
-        
-        return {"data": datasets}, 200
+        if len(datasets) > 0:
+            datasets = datasets[:len(datasets)-1]
+        else:
+            p1 = Popen(['ls', str(os.environ['HOME'])+'/datasets'], stdout=PIPE, stderr=PIPE)
+            p2 = Popen(["grep", "-oh" ,"\w*.csv"], stdin=p1.stdout, stdout=PIPE, stderr=PIPE)
+            stdout, stderr = p2.communicate()
+            datasets = stdout.decode("utf-8").split("\n")
+        data = {"datasets": datasets}
+        response = app.response_class(
+            response=json.dumps(data),
+            mimetype='application/json'
+        )
+        return response 
 
 class DFHead(Resource):
     # Returns the first ten lines of a chosen dataset
     def get(self, identifier):
-        #self.runSparkScipt(identifier)
-        #filepath = ("script-output/print-df/%s/*.json" %identifier)
-        #txt = glob.glob(filepath)
+        self.runSparkScipt(identifier)
+        filepath = ("script-output/print-df/%s/*.json" %identifier)
+        txt = glob.glob(filepath)
 
         id = str(identifier)
         columns = self.getColumns(identifier)
-        txt = [("%s/datasets/youtube.csv" % os.environ['HOME'])]
+        #txt = [("%s/datasets/youtube.csv" % os.environ['HOME'])]
         for textfile in txt:
             f = open(textfile, 'r')
             values = f.read()
             lines = values.split("\n")
-            lines = lines[1:11]
+            lines = lines[:10]
             rows = []
             for ln in lines:
-                rows += [ln.split(",")]
+                rows += [ln]
+            print(rows)
+
         data = {"id": id,
                 "columns": columns,
                 "rows": rows}

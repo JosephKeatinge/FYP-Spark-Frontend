@@ -10,4 +10,6 @@ df = spark.read.option("header", "true").csv(file_uri)
 #df.write.json("hdfs://localhost:9000/output/print-df/df1")
 df.write.mode("overwrite").json("script-output/print-df/%s" % str(sys.argv[1]))
 
+print("##############Test#################")
+
 spark.stop()

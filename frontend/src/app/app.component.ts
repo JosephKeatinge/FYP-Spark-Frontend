@@ -29,7 +29,6 @@ export class AppComponent implements OnInit {
 
   public getDatasets(): void {
     this.dataService.getDatasetList().subscribe(res => {
-      console.log(res);
       this.datasets = res.datasets;
     });
   }

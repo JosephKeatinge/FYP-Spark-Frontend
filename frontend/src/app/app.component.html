@@ -1,8 +1,11 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
   <h1>
-    Select a dataset to work with:
+    Spark GUI
   </h1>
+  <div class="command-bar">
+    <app-command-bar></app-command-bar>
+  </div>
   <nav class="nav-bar" *ngFor="let ds of datasets">
     <div class="nav-option" (click)="onSelect(ds)">{{ds}}</div>
   </nav>
