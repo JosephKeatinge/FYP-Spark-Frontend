@@ -4,8 +4,8 @@
             <th *ngFor="let col of cols">{{col}}</th>
         </tr>
         <tr *ngFor="let row of dataRows">
-            <!--<td *ngFor="let col of cols">--><td>
-                {{row | json}}</td>
+            <!--<td *ngFor="let col of cols">-->
+                <td *ngFor="let cell of row">{{row[Grade]}}</td>
         </tr>
     </table>
 </div>

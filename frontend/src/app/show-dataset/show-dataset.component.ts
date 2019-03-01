@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 // import { MatPaginator, MatTableDataSource } from '@angular/material';
 import { DataService } from '../services/data.service';
-import { StaticInjector } from '@angular/core/src/di/injector';
 
 interface Dataset {
   id: string;
