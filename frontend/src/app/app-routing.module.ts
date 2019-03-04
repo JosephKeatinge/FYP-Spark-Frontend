@@ -6,7 +6,6 @@ import { ShowDatasetComponent } from './show-dataset/show-dataset.component';
 
 
 const appRoutes: Routes = [
-    { path: 'github', component: ShowDatasetComponent },
     { path: 'dataset/:ds',
       component: ShowDatasetComponent },
     { path: '*', component: AppComponent },

@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
     this.getDatasets();
   }
 
-  public onSelect(ds): void {
+  public onSelect(ds: string): void {
     this.router.navigate(['/dataset', ds]);
   }
 

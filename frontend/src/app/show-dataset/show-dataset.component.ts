@@ -4,12 +4,6 @@ import { ActivatedRoute } from '@angular/router';
 // import { MatPaginator, MatTableDataSource } from '@angular/material';
 import { DataService } from '../services/data.service';
 
-interface Dataset {
-  id: string;
-  columns: Array<string>;
-  rows: Array<string>;
-}
-
 @Component({
   selector: 'app-show-dataset',
   templateUrl: './show-dataset.component.html',
@@ -28,8 +22,8 @@ export class ShowDatasetComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('ds');
-    this.getDatasetHead(id);
+    const urlId = this.route.snapshot.paramMap.get('ds');
+    this.getDatasetHead(urlId);
   }
 
   public getDatasetHead(id: string): void {
@@ -37,7 +31,6 @@ export class ShowDatasetComponent implements OnInit {
       this.id = res.id;
       this.cols = res.columns;
       this.dataRows = res.rows.map(row => JSON.parse(row));
-      console.log(this.dataRows[0]);
     });
   }
 }
