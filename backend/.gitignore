@@ -2,5 +2,6 @@
 /server/app/__pycache__/
 /spark-system/hdfs-backups/
 /api-server-env
+/backend-server-env
 .env
 /spark-system/script-output/
