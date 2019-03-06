@@ -1,0 +1,10 @@
+<div class="display-table">
+    <table>
+        <tr>
+            <th *ngFor="let col of cols">{{col}}</th>
+        </tr>
+        <tr *ngFor="let row of dataRows">
+            <td *ngFor="let cell of row | keyvalue">{{cell.value}}</td>
+        </tr>
+    </table>
+</div>

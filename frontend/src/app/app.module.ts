@@ -1,18 +1,22 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from "@angular/common/http";
-import { MatTableModule } from "@angular/material/table";
+import { RouterModule, Routes } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
+import { AppRoutingModule, routingComponents } from './app-routing.module';
+import { CommandBarComponent } from './command-bar/command-bar.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    routingComponents,
+    CommandBarComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    MatTableModule
+    AppRoutingModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
