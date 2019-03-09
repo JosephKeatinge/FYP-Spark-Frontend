@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   template: `
     <input #cmd>
     <button (click)=onClickCmd(cmd.value)>Execute</button>
-    `,
+    `
 })
 export class CommandBarComponent implements OnInit {
   userCmd: string;
@@ -18,6 +18,5 @@ export class CommandBarComponent implements OnInit {
 
   onClickCmd(cmd: string) {
     this.userCmd = cmd;
-    console.log(this.userCmd);
   }
 }

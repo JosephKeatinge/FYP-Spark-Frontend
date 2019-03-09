@@ -9,6 +9,12 @@ CORS(app)
 
 api = Api(app)
 
+parser = reqparse.RequestParser()
+parser.add_argument('operation')
+
+def runSparkScipt(identifier):
+    Popen(['spark-submit', '--master=spark://cs1-09-58.ucc.ie:7077', 'backend/spark-system/print-df.py', str(identifier)], stdout=None)
+
 class DFList(Resource):
     # Returns a list of all datasets available for processing
     """def getNot(self):
@@ -42,8 +48,14 @@ class DFList(Resource):
 
 class DFHead(Resource):
     # Returns the first ten lines of a chosen dataset
+    sql_query = ""
+
     def get(self, identifier):
-        self.runSparkScipt(identifier)
+        args = parser.parse_args()
+        if len(args) > 0:
+            self.sql_query = self.formQuery(args)
+
+        runSparkScipt(identifier)
         filepath = ("script-output/print-df/%s/*.json" %identifier)
         txt = glob.glob(filepath)
 
@@ -69,6 +81,7 @@ class DFHead(Resource):
         )
         return response 
 
+
     def getColumns(self, dataset):
         try:
             # Get first line of csv containing column names
@@ -80,9 +93,6 @@ class DFHead(Resource):
             return []
         
         
-
-    def runSparkScipt(self, identifier):
-        Popen(['spark-submit', '--master=spark://cs1-09-58.ucc.ie:7077', 'backend/spark-system/print-df.py', str(identifier)], stdout=None)
 
 api.add_resource(DFHead, '/dataset/<string:identifier>')
 api.add_resource(DFList, '/datasets')
