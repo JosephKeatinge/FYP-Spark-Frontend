@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-// import { MatPaginator, MatTableDataSource } from '@angular/material';
 import { DataService } from '../services/data.service';
+import { Globals } from '../globals';
+import { Dataset } from '../models/dataset';
 
 @Component({
   selector: 'app-show-dataset',
@@ -12,13 +13,12 @@ import { DataService } from '../services/data.service';
 
 export class ShowDatasetComponent implements OnInit {
   apiPath: string;
-  id: string;
-  cols: Array<string>;
-  dataRows: Array<any>;
+  dataset: Dataset;
 
   constructor(
     private dataService: DataService,
     private route: ActivatedRoute,
+    private globals: Globals
   ) {}
 
   public ngOnInit() {
@@ -27,10 +27,11 @@ export class ShowDatasetComponent implements OnInit {
   }
 
   public getDatasetHead(id: string): void {
-    this.dataService.getDataset(id).subscribe((res: Dataset) => {
-      this.id = res.id;
-      this.cols = res.columns;
-      this.dataRows = res.rows.map(row => JSON.parse(row));
+    this.dataService.getDataset(id).subscribe(res => {
+      this.dataset.id = res.id;
+      this.dataset.cols = res.cols;
+      this.dataset.rows = res.rows.map(row => JSON.parse(row));
+      console.log(res.query);
     });
   }
 }

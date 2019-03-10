@@ -11,6 +11,8 @@ api = Api(app)
 
 parser = reqparse.RequestParser()
 parser.add_argument('operation')
+parser.add_argument('columns', action='append')
+parser.add_argument('range')
 
 def runSparkScipt(identifier):
     Popen(['spark-submit', '--master=spark://cs1-09-58.ucc.ie:7077', 'backend/spark-system/print-df.py', str(identifier)], stdout=None)
@@ -48,14 +50,14 @@ class DFList(Resource):
 
 class DFHead(Resource):
     # Returns the first ten lines of a chosen dataset
-    sql_query = ""
+    sqlQuery = ""
 
     def get(self, identifier):
         args = parser.parse_args()
-        if len(args) > 0:
-            self.sql_query = self.formQuery(args)
+        self.sqlQuery = self.createQuery(args, identifier)
+        return {"query": self.sqlQuery}
 
-        runSparkScipt(identifier)
+        """runSparkScipt(identifier, self.sqlQuery)
         filepath = ("script-output/print-df/%s/*.json" %identifier)
         txt = glob.glob(filepath)
 
@@ -79,7 +81,7 @@ class DFHead(Resource):
             response=json.dumps(data),
             mimetype='application/json'
         )
-        return response 
+        return response """
 
 
     def getColumns(self, dataset):
@@ -92,7 +94,19 @@ class DFHead(Resource):
         except FileNotFoundError:
             return []
         
-        
+    def createQuery(self, args, id):
+        # Create the SQL query to be run against the dataframe
+        tableName = id.split(".")[0]
+        query = "SELECT "
+        if args['columns']:
+            if args['operation']:
+                query += args['operation'] + "(" + args['columns'] + ") "
+            else:
+                query += ",".join(args['columns']) + " "
+        else:
+            query += "* "
+        query += "FROM %s" % tableName
+        return query
 
 api.add_resource(DFHead, '/dataset/<string:identifier>')
 api.add_resource(DFList, '/datasets')

@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { CommandBarComponent } from './command-bar/command-bar.component';
+import { Globals } from './globals';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,9 @@ import { CommandBarComponent } from './command-bar/command-bar.component';
     HttpClientModule,
     AppRoutingModule,
   ],
-  providers: [],
+  providers: [
+    Globals,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

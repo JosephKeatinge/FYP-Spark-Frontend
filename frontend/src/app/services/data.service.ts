@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 const apiRoot = 'http://127.0.0.1:5000';
@@ -21,6 +21,7 @@ export class DataService {
   }
 
   public getDataset(ds: string): Observable<any> {
-    return this.http.get(apiRoot.concat('/dataset/' + ds), {headers: httpHeaders});
+    const options = { params: new HttpParams().set('columns', '[a,b,c]') };
+    return this.http.get(apiRoot.concat('/dataset/' + ds), options);
   }
 }
