@@ -33,14 +33,13 @@ class DFList(Resource):
         p2 = Popen(["grep", "-oh" ,"\w*.csv"], stdin=p1.stdout, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p2.communicate()
         datasets = stdout.decode("utf-8").split("\n")
-        # Remove empty string from end of list
-        if len(datasets) > 0:
-            datasets = datasets[:len(datasets)-1]
-        else:
+        if len(datasets) < 2:
             p1 = Popen(['ls', str(os.environ['HOME'])+'/datasets'], stdout=PIPE, stderr=PIPE)
             p2 = Popen(["grep", "-oh" ,"\w*.csv"], stdin=p1.stdout, stdout=PIPE, stderr=PIPE)
             stdout, stderr = p2.communicate()
             datasets = stdout.decode("utf-8").split("\n")
+        # Remove empty string from end of list
+        datasets = datasets[:len(datasets)-1]
         data = {"datasets": datasets}
         response = app.response_class(
             response=json.dumps(data),
@@ -55,9 +54,9 @@ class DFHead(Resource):
     def get(self, identifier):
         args = parser.parse_args()
         self.sqlQuery = self.createQuery(args, identifier)
-        return {"query": self.sqlQuery}
+        #return {"query": self.sqlQuery}
 
-        """runSparkScipt(identifier, self.sqlQuery)
+        runSparkScipt(identifier)
         filepath = ("script-output/print-df/%s/*.json" %identifier)
         txt = glob.glob(filepath)
 
@@ -76,12 +75,13 @@ class DFHead(Resource):
 
         data = {"id": id,
                 "columns": columns,
-                "rows": rows}
+                "rows": rows,
+                "query": self.sqlQuery}
         response = app.response_class(
             response=json.dumps(data),
             mimetype='application/json'
         )
-        return response """
+        return response 
 
 
     def getColumns(self, dataset):
