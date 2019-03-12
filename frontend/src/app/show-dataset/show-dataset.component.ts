@@ -23,6 +23,10 @@ export class ShowDatasetComponent implements OnInit {
 
   public ngOnInit() {
     const urlId = this.route.snapshot.paramMap.get('ds');
+    this.route.queryParams
+      .subscribe(params => {
+        console.log(params.operation);
+      });
     this.getDatasetHead(urlId);
   }
 
@@ -31,7 +35,7 @@ export class ShowDatasetComponent implements OnInit {
       this.dataset.id = res.id;
       this.dataset.cols = res.cols;
       this.dataset.rows = res.rows.map(row => JSON.parse(row));
-      console.log(res.query);
+      this.globals.currentDS = this.dataset;
     });
   }
 }

@@ -12,7 +12,6 @@ import { Globals } from './globals';
 })
 
 export class AppComponent implements OnInit {
-  targetUrl = 'http://127.0.0.1:5000/datasets';
   datasets: string[];
 
   constructor(
@@ -31,7 +30,8 @@ export class AppComponent implements OnInit {
 
   public getDatasets(): void {
     this.dataService.getDatasetList().subscribe(res => {
-      this.globals.datasets = res.datasets;
+      this.datasets = res.datasets;
+      this.globals.datasets = this.datasets;
     });
   }
 }

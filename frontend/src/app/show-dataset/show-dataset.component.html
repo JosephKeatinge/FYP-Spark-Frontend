@@ -1,9 +1,9 @@
 <div class="display-table">
     <table>
         <tr>
-            <th *ngFor="let col of cols">{{col}}</th>
+            <th *ngFor="let col of dataset.cols">{{col}}</th>
         </tr>
-        <tr *ngFor="let row of dataRows">
+        <tr *ngFor="let row of dataset.rows">
             <td *ngFor="let cell of row | keyvalue">{{cell.value}}</td>
         </tr>
     </table>
