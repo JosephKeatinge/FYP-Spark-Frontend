@@ -12,10 +12,11 @@ api = Api(app)
 parser = reqparse.RequestParser()
 parser.add_argument('operation')
 parser.add_argument('columns', action='append')
-parser.add_argument('range')
+parser.add_argument('range', default=20, type=int)
 
-def runSparkScipt(identifier):
-    Popen(['spark-submit', '--master=spark://cs1-09-58.ucc.ie:7077', 'backend/spark-system/print-df.py', str(identifier)], stdout=None)
+def runSparkScipt(identifier, query):
+    p = Popen(['spark-submit', '--master=local[*]', 'backend/spark-system/print-df.py', identifier, query], stdout=None)
+    p.communicate()
 
 class DFList(Resource):
     # Returns a list of all datasets available for processing
@@ -49,39 +50,46 @@ class DFList(Resource):
 
 class DFHead(Resource):
     # Returns the first ten lines of a chosen dataset
+    hdfsRootURL = "hdfs://localhost:9000"
+    outputDir = "/output"
     sqlQuery = ""
+    columns = ""
 
     def get(self, identifier):
         args = parser.parse_args()
-        self.sqlQuery = self.createQuery(args, identifier)
-        #return {"query": self.sqlQuery}
+        tableName = identifier.strip(".csv")
+        self.sqlQuery = self.createQuery(args, tableName)
+        # return {"query": self.sqlQuery}
+        
+        runSparkScipt(identifier, self.sqlQuery)
+        p1 = Popen(['hdfs', 'dfs', '-ls', self.outputDir+'/'+tableName], stdout=PIPE, stderr=PIPE)
+        p2 = Popen(["grep", "-oh" ,"part\S*.json"], stdin=p1.stdout, stdout=PIPE, stderr=PIPE)
+        stdout, stderr = p2.communicate()
+        output_files = stdout.decode("utf-8").split("\n")
+        output_files = output_files[:len(output_files)-1]
 
-        runSparkScipt(identifier)
-        filepath = ("script-output/print-df/%s/*.json" %identifier)
-        txt = glob.glob(filepath)
+        if args['columns']:
+            columns = self.columns.split(",")
+        else:
+            columns = self.getColumns(identifier)
 
-        id = str(identifier)
-        columns = self.getColumns(identifier)
-        #txt = [("%s/datasets/youtube.csv" % os.environ['HOME'])]
-        for textfile in txt:
-            f = open(textfile, 'r')
-            values = f.read()
-            lines = values.split("\n")
-            lines = lines[:10]
-            rows = []
-            for ln in lines:
-                rows += [ln]
-            print(rows)
+        rows = []
+        for textfile in output_files:
+            file_url = self.outputDir+'/'+tableName+'/'+textfile
+            p = Popen(['hdfs', 'dfs', '-cat', file_url], stdout=PIPE, stderr=PIPE)
+            stdout, stderr = p.communicate()
+            lines = stdout.decode("utf-8").split("\n")
+            lines = lines[:len(lines)-1]
+            rows += lines
 
-        data = {"id": id,
+        data = {"id": identifier,
                 "columns": columns,
-                "rows": rows,
-                "query": self.sqlQuery}
+                "rows": rows}
         response = app.response_class(
             response=json.dumps(data),
             mimetype='application/json'
         )
-        return response 
+        return response
 
 
     def getColumns(self, dataset):
@@ -94,18 +102,21 @@ class DFHead(Resource):
         except FileNotFoundError:
             return []
         
-    def createQuery(self, args, id):
+    def createQuery(self, args, table):
         # Create the SQL query to be run against the dataframe
-        tableName = id.split(".")[0]
         query = "SELECT "
         if args['columns']:
             if args['operation']:
-                query += args['operation'] + "(" + args['columns'] + ") "
-            else:
-                query += ",".join(args['columns']) + " "
+                query += args['operation'] + "("
+            for arg in args['columns']:
+                cols = arg.strip(" []")
+                query += cols
+                self.columns += cols
+            query += ") " if args['operation'] else " "
         else:
             query += "* "
-        query += "FROM %s" % tableName
+        query += "FROM %s " % table
+        query += "LIMIT %s" % args['range']
         return query
 
 api.add_resource(DFHead, '/dataset/<string:identifier>')
