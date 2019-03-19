@@ -5,7 +5,7 @@
 
 master_url="spark://cs1-09-58.ucc.ie:7077"
 
-#hdfs namenode -format
+hdfs namenode -format
 ${HADOOP_HOME}/sbin/start-dfs.sh
 
 #${SPARK_HOME}/sbin/start-master.sh

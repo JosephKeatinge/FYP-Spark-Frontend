@@ -57,7 +57,7 @@ class DFHead(Resource):
 
     def get(self, identifier):
         args = parser.parse_args()
-        tableName = identifier.strip(".csv")
+        tableName = identifier.split(".")[0]
         self.sqlQuery = self.createQuery(args, tableName)
         # return {"query": self.sqlQuery}
         
