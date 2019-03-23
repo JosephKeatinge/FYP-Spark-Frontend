@@ -9,6 +9,9 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 })
 export class CommandBarComponent implements OnInit {
   errorMsg = '';
+  commandOpts = [
+    'MIN', 'MAX', 'AVG', 'SUM'
+  ];
 
   @Output() commandEntered = new EventEmitter();
 
@@ -19,12 +22,20 @@ export class CommandBarComponent implements OnInit {
   }
 
   onClickCmd(cmd: string) {
-    // const command = this.parseCommand(cmd);
+    this.parseCommand(cmd);
     this.commandEntered.emit(cmd);
   }
 
-  parseCommand(command: string): {operation: string, columns: Array<string>, range: number} {
-    return {operation: '', columns: [], range: 0};
+  parseCommand(command: string) {
+    let operation = '';
+    let range = '';
+    for (let i = 0; i < this.commandOpts.length; i++) {
+      const matchExp = new RegExp(this.commandOpts[i]);
+      if (command.match(matchExp)) {
+        operation = this.commandOpts[i];
+      }
+    }
+    const rangeExp = new RegExp('([A-Z]+\d*:?)');
   }
 }
 
