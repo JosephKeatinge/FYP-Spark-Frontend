@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { DataService } from './services/data.service';
-import { Globals } from './globals';
+import { EventEmitter } from 'selenium-webdriver';
+import { Dataset } from './models/dataset';
 
 @Component({
   selector: 'app-root',
@@ -13,11 +14,12 @@ import { Globals } from './globals';
 
 export class AppComponent implements OnInit {
   datasets: string[];
+  currentDataset: String;
+  userCommand: String;
 
   constructor(
     private dataService: DataService,
     private router: Router,
-    private globals: Globals
     ) {}
 
   public ngOnInit(): void {
@@ -25,13 +27,17 @@ export class AppComponent implements OnInit {
   }
 
   public onSelect(ds: string): void {
-    this.router.navigate(['/dataset', ds]);
+    this.currentDataset = ds;
+    // this.router.navigate(['/dataset', ds]);
+  }
+
+  public printCmd(cmd: String) {
+    console.log(cmd);
   }
 
   public getDatasets(): void {
     this.dataService.getDatasetList().subscribe(res => {
       this.datasets = res.datasets;
-      this.globals.datasets = this.datasets;
     });
   }
 }

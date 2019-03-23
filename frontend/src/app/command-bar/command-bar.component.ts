@@ -1,36 +1,30 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Globals } from '../globals';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-command-bar',
   template: `
     <input #cmd>
-    <button (click)=onClickCmd(cmd.value)>Execute</button> <br>
-    <h3>{{errorMsg}}<h3>
+    <button (click)=onClickCmd(cmd.value)>Execute</button>
     `
 })
 export class CommandBarComponent implements OnInit {
-  userCmd: string;
   errorMsg = '';
 
+  @Output() commandEntered = new EventEmitter();
+
   constructor(
-    private router: Router,
-    private globals: Globals
     ) { }
 
   ngOnInit() {
   }
 
   onClickCmd(cmd: string) {
-    this.userCmd = cmd;
-    if (this.globals.currentDS) {
-      this.router.navigate(
-        ['/dataset', this.globals.currentDS.id],
-        {queryParams: {operation: this.userCmd}}
-        );
-    } else {
-      this.errorMsg = 'Please select a dataset';
-    }
+    // const command = this.parseCommand(cmd);
+    this.commandEntered.emit(cmd);
+  }
+
+  parseCommand(command: string): {operation: string, columns: Array<string>, range: number} {
+    return {operation: '', columns: [], range: 0};
   }
 }
+

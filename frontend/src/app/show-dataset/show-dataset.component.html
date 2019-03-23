@@ -1,9 +1,15 @@
-<div class="display-table">
+<div *ngIf="dsLoaded">
     <table>
         <tr>
-            <th *ngFor="let col of dataset.cols">{{col}}</th>
+            <td> </td>
+            <th *ngFor="let col of cols; let i=index">{{i | alphaValue}}</th>
         </tr>
-        <tr *ngFor="let row of dataset.rows">
+        <tr>
+            <td> </td>
+            <th *ngFor="let col of cols">{{col}}</th>
+        </tr>
+        <tr *ngFor="let row of rows; let i=index">
+            <td>{{i}}</td>
             <td *ngFor="let cell of row | keyvalue">{{cell.value}}</td>
         </tr>
     </table>

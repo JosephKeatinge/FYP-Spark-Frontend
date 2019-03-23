@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { DataService } from '../services/data.service';
-import { Globals } from '../globals';
 import { Dataset } from '../models/dataset';
 
 @Component({
@@ -11,31 +10,38 @@ import { Dataset } from '../models/dataset';
   styleUrls: ['./show-dataset.component.css']
 })
 
-export class ShowDatasetComponent implements OnInit {
+export class ShowDatasetComponent implements OnInit, OnChanges {
   apiPath: string;
-  dataset: Dataset;
+  @Input() datasetID: String;
+  cols: Array<String>;
+  rows: Array<any>;
+  dsLoaded = false;
 
   constructor(
     private dataService: DataService,
     private route: ActivatedRoute,
-    private globals: Globals
   ) {}
 
   public ngOnInit() {
-    const urlId = this.route.snapshot.paramMap.get('ds');
-    this.route.queryParams
-      .subscribe(params => {
-        console.log(params.operation);
-      });
-    this.getDatasetHead(urlId);
+    // const urlId = this.route.snapshot.paramMap.get('ds');
+  }
+
+  public ngOnChanges(): void {
+    // Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+    // Add '${implements OnChanges}' to the class.
+    if (this.datasetID) {
+      this.getDatasetHead(this.datasetID.valueOf());
+      console.log('Fetching dataset: ' + this.datasetID);
+    }
   }
 
   public getDatasetHead(id: string): void {
     this.dataService.getDataset(id).subscribe(res => {
-      this.dataset.id = res.id;
-      this.dataset.cols = res.cols;
-      this.dataset.rows = res.rows.map(row => JSON.parse(row));
-      this.globals.currentDS = this.dataset;
+      // this.dataset.id = res.id;
+      this.cols = res.columns;
+      this.cols = this.cols.sort();
+      this.rows = res.rows.map(row => JSON.parse(row));
+      this.dsLoaded = true;
     });
   }
 }

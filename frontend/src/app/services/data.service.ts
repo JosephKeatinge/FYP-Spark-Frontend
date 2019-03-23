@@ -21,7 +21,7 @@ export class DataService {
   }
 
   public getDataset(ds: string): Observable<any> {
-    const options = { params: new HttpParams().set('columns', '[a,b,c]') };
-    return this.http.get(apiRoot.concat('/dataset/' + ds), options);
+    const endpoint = apiRoot.concat('/dataset/' + ds);
+    return this.http.get(endpoint);
   }
 }

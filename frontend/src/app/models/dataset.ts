@@ -1,5 +1,5 @@
 export interface Dataset {
     id: String;
-    cols: Array<any>;
+    cols: Array<String>;
     rows: Array<any>;
 }

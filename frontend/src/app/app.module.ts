@@ -7,12 +7,14 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { CommandBarComponent } from './command-bar/command-bar.component';
 import { Globals } from './globals';
+import { AlphaValuePipe } from './pipes/alpha-value.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     routingComponents,
     CommandBarComponent,
+    AlphaValuePipe,
   ],
   imports: [
     BrowserModule,

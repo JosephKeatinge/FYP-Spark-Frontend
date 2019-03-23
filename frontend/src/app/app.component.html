@@ -1,16 +1,16 @@
-<!--The content below is only a placeholder and can be replaced.-->
+
 <div style="text-align:center">
   <h1>
     Spark GUI
   </h1>
-  <div class="command-bar">
-    <app-command-bar></app-command-bar>
-  </div>
+<div class="command-bar">
+</div>
   <nav class="nav-bar" *ngFor="let ds of datasets">
     <div class="nav-option" (click)="onSelect(ds)">{{ds}}</div>
   </nav>
+  <app-command-bar (commandEntered)="printCmd($event)"></app-command-bar>
 </div>
-<router-outlet></router-outlet>
+<app-show-dataset [datasetID]="currentDataset"></app-show-dataset>
 
 
 
