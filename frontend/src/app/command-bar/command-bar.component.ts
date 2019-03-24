@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { stringify } from 'querystring';
 
 @Component({
   selector: 'app-command-bar',
@@ -26,20 +27,24 @@ export class CommandBarComponent implements OnInit {
     this.commandEntered.emit(cmd);
   }
 
-  parseCommand(command: string) {
-    let operation = '';
-    let range = [];
+  parseCommand(command: string): {operation: string, range: Array<string>} {
+    let op: string;
+    let range: Array<string>;
     for (let i = 0; i < this.commandOpts.length; i++) {
       const matchExp = new RegExp(this.commandOpts[i]);
       if (command.match(matchExp)) {
-        operation = this.commandOpts[i];
+        op = this.commandOpts[i];
+        command = command.replace(matchExp, '');
+        break;
       }
     }
     const rangeExp = new RegExp(/[A-Z]+\d*/g);
-    const matchedItems = command.split('(')[1].match(rangeExp);
+    const matchedItems = command.match(rangeExp);
     if (matchedItems.length > 0) {
-      console.log('Match: ' + matchedItems);
+      range = matchedItems;
     }
+
+    return {operation: op, range: range};
   }
 }
 

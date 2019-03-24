@@ -12,7 +12,7 @@ import { Dataset } from '../models/dataset';
 
 export class ShowDatasetComponent implements OnInit, OnChanges {
   apiPath: string;
-  @Input() datasetID: String;
+  @Input() datasetID: string;
   cols: Array<String>;
   rows: Array<any>;
   dsLoaded = false;
@@ -30,7 +30,7 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
     // Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
     // Add '${implements OnChanges}' to the class.
     if (this.datasetID) {
-      this.getDatasetHead(this.datasetID.valueOf());
+      this.getDatasetHead(this.datasetID.concat('.csv'));
       console.log('Fetching dataset: ' + this.datasetID);
     }
   }
