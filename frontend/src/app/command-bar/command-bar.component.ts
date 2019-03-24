@@ -28,14 +28,18 @@ export class CommandBarComponent implements OnInit {
 
   parseCommand(command: string) {
     let operation = '';
-    let range = '';
+    let range = [];
     for (let i = 0; i < this.commandOpts.length; i++) {
       const matchExp = new RegExp(this.commandOpts[i]);
       if (command.match(matchExp)) {
         operation = this.commandOpts[i];
       }
     }
-    const rangeExp = new RegExp('([A-Z]+\d*:?)');
+    const rangeExp = new RegExp(/[A-Z]+\d*/g);
+    const matchedItems = command.split('(')[1].match(rangeExp);
+    if (matchedItems.length > 0) {
+      console.log('Match: ' + matchedItems);
+    }
   }
 }
 

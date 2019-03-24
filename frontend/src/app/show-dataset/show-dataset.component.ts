@@ -37,7 +37,6 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
 
   public getDatasetHead(id: string): void {
     this.dataService.getDataset(id).subscribe(res => {
-      // this.dataset.id = res.id;
       this.cols = res.columns;
       this.cols = this.cols.sort();
       this.rows = res.rows.map(row => JSON.parse(row));

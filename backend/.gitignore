@@ -1,6 +1,6 @@
 /server/spark-server/
 /server/app/__pycache__/
-/spark-system/hdfs-backups/
+/spark-system/ds-dtypes
 /api-server-env
 /backend-server-env
 .env

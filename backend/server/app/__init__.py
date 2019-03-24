@@ -31,7 +31,7 @@ class DFList(Resource):
     def get(self):
         p1 = Popen(['hdfs', 'dfs', '-ls', '/datasets'], stdout=PIPE, stderr=PIPE)
         # Regex to get just the filenames out of the output
-        p2 = Popen(["grep", "-oh" ,"\w*.csv"], stdin=p1.stdout, stdout=PIPE, stderr=PIPE)
+        p2 = Popen(['grep', '-o', '[[:alnum:]]*$'], stdin=p1.stdout, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p2.communicate()
         datasets = stdout.decode("utf-8").split("\n")
         if len(datasets) < 2:
@@ -40,7 +40,7 @@ class DFList(Resource):
             stdout, stderr = p2.communicate()
             datasets = stdout.decode("utf-8").split("\n")
         # Remove empty string from end of list
-        datasets = datasets[:len(datasets)-1]
+        datasets = datasets[1:len(datasets)-1]
         data = {"datasets": datasets}
         response = app.response_class(
             response=json.dumps(data),
