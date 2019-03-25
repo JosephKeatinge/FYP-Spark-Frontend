@@ -1,16 +1,20 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-info">
+  <a class="navbar-brand" href="#">Spark GUI</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+  </button>
 
-<div style="text-align:center">
-  <h1>
-    Spark GUI
-  </h1>
-<div class="command-bar">
-</div>
-  <nav class="nav-bar" *ngFor="let ds of datasets">
-    <div class="nav-option" (click)="onSelect(ds)">{{ds}}</div>
-  </nav>
-  <app-command-bar (commandEntered)="printCmd($event)"></app-command-bar>
-</div>
-<app-show-dataset [datasetID]="currentDataset"></app-show-dataset>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <!--<div *ngFor="let ds of datasets">
+        <button class="btn btn-warning" type="button" (click)="onSelect(ds)">{{ds}}</button>
+    </div>-->
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item" *ngFor="let ds of datasets" (click)="onSelect(ds)">{{ds}}</li>
+    </ul>
+    <app-command-bar class="form-inline my-2 my-lg-0" (commandEntered)="sendCmd($event)"></app-command-bar>
+  </div>
+</nav>
+<app-show-dataset [userCmd]="userCommand" [datasetID]="currentDataset"></app-show-dataset>
 
 
 

@@ -4,8 +4,13 @@ import { stringify } from 'querystring';
 @Component({
   selector: 'app-command-bar',
   template: `
-    <input #cmd>
-    <button (click)=onClickCmd(cmd.value)>Execute</button>
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="basic-addon1">=</span>
+    </div>
+    <input #cmd type="text" class="form-control" placeholder="CMD(CELL1:CELL2)">
+    <button class="btn btn-primary" type="submit" (click)=onClickCmd(cmd.value)>Execute</button>
+  </div>
     `
 })
 export class CommandBarComponent implements OnInit {
@@ -23,8 +28,8 @@ export class CommandBarComponent implements OnInit {
   }
 
   onClickCmd(cmd: string) {
-    this.parseCommand(cmd);
-    this.commandEntered.emit(cmd);
+    const parsedCmd = this.parseCommand(cmd);
+    this.commandEntered.emit(parsedCmd);
   }
 
   parseCommand(command: string): {operation: string, range: Array<string>} {

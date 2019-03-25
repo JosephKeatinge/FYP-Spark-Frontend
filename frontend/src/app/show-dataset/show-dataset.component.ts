@@ -13,6 +13,7 @@ import { Dataset } from '../models/dataset';
 export class ShowDatasetComponent implements OnInit, OnChanges {
   apiPath: string;
   @Input() datasetID: string;
+  @Input() userCmd: {operation: string, range: string[]};
   cols: Array<String>;
   rows: Array<any>;
   dsLoaded = false;
@@ -36,11 +37,20 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
   }
 
   public getDatasetHead(id: string): void {
-    this.dataService.getDataset(id).subscribe(res => {
-      this.cols = res.columns;
-      this.cols = this.cols.sort();
-      this.rows = res.rows.map(row => JSON.parse(row));
-      this.dsLoaded = true;
-    });
+    if (this.userCmd) {
+      this.dataService.getDataset(id, this.userCmd).subscribe(res => {
+        this.cols = res.columns;
+        this.cols = this.cols.sort();
+        this.rows = res.rows.map(row => JSON.parse(row));
+        this.dsLoaded = true;
+      });
+    } else {
+      this.dataService.getDataset(id).subscribe(res => {
+        this.cols = res.columns;
+        this.cols = this.cols.sort();
+        this.rows = res.rows.map(row => JSON.parse(row));
+        this.dsLoaded = true;
+      });
+    }
   }
 }
