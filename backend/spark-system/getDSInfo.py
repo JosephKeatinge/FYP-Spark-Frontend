@@ -14,14 +14,22 @@ dsDirList = dsDirList[1:len(dsDirList)-1]
 
 for dir in dsDirList:
     dsPath = "/datasets/%s/%s.csv" % (dir, dir)
-    dsInfoFilePath = "/home/jsk1/FYP-Spark-Frontend/backend/spark-system/ds-dtypes/%s.txt" % dir
+    dsInfoFilePath = "/home/jsk1/FYP-Spark-Frontend/backend/spark-system/ds-dtypes/%s.json" % dir
     df = spark.read.option("header", "true").option("inferSchema", "true").csv(dsPath)
     print("################ WRITING FILE /tmp/%s ####################" % dsInfoFilePath)
     f = open(dsInfoFilePath, "w+")
     cols = df.dtypes
-    for c in cols:
-        name, typ = c
-        f.write("%s: %s\n" % (name, typ))
+    numCols = len(cols)
+    f.write("{")
+    i = 0
+    while i < numCols:
+        name, typ = cols[i]
+        if numCols-i >1: 
+            f.write("\"%s\":\"%s\"," % (name, typ))
+        else:
+            f.write("\"%s\":\"%s\"" % (name, typ))
+        i += 1
+    f.write("}")
     f.close()
     print("################ SUCCESSFULLY WRITTEN FILE %s ####################" % dsInfoFilePath)
 

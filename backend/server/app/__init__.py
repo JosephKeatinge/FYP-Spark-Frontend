@@ -87,13 +87,14 @@ class DFHead(Resource):
         )
         return response
 
-
     def getColumns(self, dataset):
+        columns = []
         try:
-            # Get first line of csv containing column names
-            f = open("%s/datasets/%s.csv" % (os.environ['HOME'], str(dataset)))
-            cols = f.read().split("\n")[0]
-            columns = cols.split(',')
+            f = open("backend/spark-system/ds-dtypes/%s.json" % (dataset))
+            colString = f.read()
+            colList = colString.strip("{}").split(",")
+            for col in colList:
+                columns += [col.split(":")[0].strip("\"")]
             return columns
         except FileNotFoundError:
             return []
@@ -117,5 +118,12 @@ class DFHead(Resource):
         query += "LIMIT %s" % args['lines']
         return query
 
+class DFColumns(Resource):
+    def get(self, identifier):
+        f = open("backend/spark-system/ds-dtypes/%s.json" % (identifier))
+        cols = f.read()
+        return cols
+
 api.add_resource(DFHead, '/dataset/<string:identifier>')
 api.add_resource(DFList, '/datasets')
+api.add_resource(DFColumns, '/dataset/columns/<string:identifier>')
