@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { ChartsModule } from 'ng2-charts';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule, routingComponents } from './app-routing.module';
@@ -20,6 +21,7 @@ import { AlphaValuePipe } from './pipes/alpha-value.pipe';
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
+    ChartsModule,
   ],
   providers: [
     Globals,

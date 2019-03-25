@@ -13,9 +13,9 @@
   "dependencies": {
     "@angular/animations": "^6.1.10",
     "@angular/cdk": "^7.3.3",
-    "@angular/common": "^6.1.0",
+    "@angular/common": "^7.2.10",
     "@angular/compiler": "^6.1.0",
-    "@angular/core": "^6.1.0",
+    "@angular/core": "^7.2.10",
     "@angular/forms": "^6.1.0",
     "@angular/http": "^6.1.0",
     "@angular/material": "^7.3.3",
@@ -23,9 +23,13 @@
     "@angular/platform-browser-dynamic": "^6.1.0",
     "@angular/router": "^6.1.0",
     "bootstrap": "^4.3.1",
+    "chart.js": "^2.8.0",
     "core-js": "^2.5.4",
+    "jquery": "^1.12.4",
+    "ng2-charts": "^2.0.4",
+    "popper.js": "^1.14.7",
     "run": "^1.4.0",
-    "rxjs": "~6.2.0",
+    "rxjs": "^6.4.0",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
