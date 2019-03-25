@@ -20,12 +20,14 @@ export class DataService {
     return this.http.get(apiRoot.concat('/datasets'), {headers: httpHeaders});
   }
 
-  public getDataset(ds: string, command?: {operation: string, range: Array<string>}): Observable<any> {
+  public getDataset(ds: string, command?: {operation: string, range: Array<string>, column: string}): Observable<any> {
     const endpoint = apiRoot.concat('/dataset/' + ds);
     if (command) {
       const params = new HttpParams()
         .set('operation', command.operation)
-        .set('range', command.range.toString());
+        .set('range', command.range.toString())
+        .set('column', command.column);
+      console.log('Set params: ' + params);
       return this.http.get(endpoint, {params: params});
     }
     return this.http.get(endpoint);

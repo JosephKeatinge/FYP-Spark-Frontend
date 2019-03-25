@@ -15,7 +15,7 @@ import { Dataset } from './models/dataset';
 export class AppComponent implements OnInit {
   datasets: string[];
   currentDataset: string;
-  userCommand: object;
+  userCommand: {operation: string, range: Array<string>, column: string};
 
   constructor(
     private dataService: DataService,
@@ -23,8 +23,7 @@ export class AppComponent implements OnInit {
     ) {}
 
   public ngOnInit(): void {
-    // this.getDatasets();
-    this.datasets = ['one', 'two', 'three', 'four'];
+    this.getDatasets();
   }
 
   public onSelect(ds: string): void {
@@ -32,7 +31,7 @@ export class AppComponent implements OnInit {
     // this.router.navigate(['/dataset', ds]);
   }
 
-  public sendCmd(cmd: {operation: string, range: Array<string>}) {
+  public sendCmd(cmd: {operation: string, range: Array<string>, column: string}) {
     console.log(cmd);
     this.userCommand = cmd;
   }

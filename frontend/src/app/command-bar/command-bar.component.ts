@@ -16,7 +16,7 @@ import { stringify } from 'querystring';
 export class CommandBarComponent implements OnInit {
   errorMsg = '';
   commandOpts = [
-    'MIN', 'MAX', 'AVG', 'SUM'
+    'MIN', 'MAX', 'AVG', 'SUM', 'COUNT', 'SELECT'
   ];
 
   @Output() commandEntered = new EventEmitter();
@@ -32,9 +32,10 @@ export class CommandBarComponent implements OnInit {
     this.commandEntered.emit(parsedCmd);
   }
 
-  parseCommand(command: string): {operation: string, range: Array<string>} {
+  parseCommand(command: string): {operation: string, range: Array<string>, column: string} {
     let op: string;
     let range: Array<string>;
+    let col: string;
     for (let i = 0; i < this.commandOpts.length; i++) {
       const matchExp = new RegExp(this.commandOpts[i]);
       if (command.match(matchExp)) {
@@ -43,13 +44,23 @@ export class CommandBarComponent implements OnInit {
         break;
       }
     }
-    const rangeExp = new RegExp(/[A-Z]+\d*/g);
-    const matchedItems = command.match(rangeExp);
-    if (matchedItems.length > 0) {
-      range = matchedItems;
+    const colExp = new RegExp(/[A-Z]+/g);
+    const matchedLetters = command.match(colExp);
+    if (matchedLetters) {
+      col = matchedLetters[0];
+    } else {
+      col = '*';
+      console.log('Col = ' + col);
+    }
+    const rangeExp = new RegExp(/\d+/g);
+    const matchedNum = command.match(rangeExp);
+    if (matchedNum) {
+       range = matchedNum;
+    } else {
+      range = [];
     }
 
-    return {operation: op, range: range};
+    return {operation: op, column: col, range: range};
   }
 }
 

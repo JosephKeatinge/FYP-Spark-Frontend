@@ -4,15 +4,10 @@
       <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <!--<div *ngFor="let ds of datasets">
+    <div *ngFor="let ds of datasets">
         <button class="btn btn-warning" type="button" (click)="onSelect(ds)">{{ds}}</button>
-    </div>-->
-    <ul class="navbar-nav mr-auto">
-        <li class="nav-item" *ngFor="let ds of datasets" (click)="onSelect(ds)">{{ds}}</li>
-    </ul>
+    </div>
     <app-command-bar class="form-inline my-2 my-lg-0" (commandEntered)="sendCmd($event)"></app-command-bar>
-  </div>
 </nav>
 <app-show-dataset [userCmd]="userCommand" [datasetID]="currentDataset"></app-show-dataset>
 

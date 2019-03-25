@@ -13,8 +13,8 @@ import { Dataset } from '../models/dataset';
 export class ShowDatasetComponent implements OnInit, OnChanges {
   apiPath: string;
   @Input() datasetID: string;
-  @Input() userCmd: {operation: string, range: string[]};
-  cols: Array<String>;
+  @Input() userCmd: {operation: string, range: Array<string>, column: string};
+  cols: Array<string>;
   rows: Array<any>;
   dsLoaded = false;
 
@@ -31,20 +31,27 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
     // Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
     // Add '${implements OnChanges}' to the class.
     if (this.datasetID) {
-      this.getDatasetHead(this.datasetID.concat('.csv'));
-      console.log('Fetching dataset: ' + this.datasetID);
+      this.getDatasetHead(this.datasetID);
     }
   }
 
   public getDatasetHead(id: string): void {
     if (this.userCmd) {
+      if (this.userCmd.column.charCodeAt(0) - 'A'.charCodeAt(0) >= 0) {
+        this.userCmd.column = this.cols[this.userCmd.column.charCodeAt(0) - 'A'.charCodeAt(0)];
+      }
+      console.log('Fetching dataset ' + this.datasetID + ' with command ' + this.userCmd);
       this.dataService.getDataset(id, this.userCmd).subscribe(res => {
-        this.cols = res.columns;
-        this.cols = this.cols.sort();
+        if (this.userCmd.column !== '*') {
+          this.cols = [this.userCmd.column];
+        } else {
+          this.cols = res.columns;
+        }
         this.rows = res.rows.map(row => JSON.parse(row));
         this.dsLoaded = true;
       });
     } else {
+      console.log('Fetching dataset ' + this.datasetID);
       this.dataService.getDataset(id).subscribe(res => {
         this.cols = res.columns;
         this.cols = this.cols.sort();

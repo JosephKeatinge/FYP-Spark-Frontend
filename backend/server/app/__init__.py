@@ -11,8 +11,12 @@ api = Api(app)
 
 parser = reqparse.RequestParser()
 parser.add_argument('operation')
+parser.add_argument('column', type=str)
 parser.add_argument('columns', action='append')
-parser.add_argument('range', default=20, type=int)
+parser.add_argument('range')
+parser.add_argument('lines', default=50, type=int)
+
+ALLOWED_OPS = {"AVG": "num", "SUM": "num", "MIN": "num", "MAX": "num", "COUNT": "any", "SELECT": "string"}
 
 def runSparkScipt(identifier, query):
     p = Popen(['spark-submit', '--master=local[*]', 'backend/spark-system/print-df.py', identifier, query], stdout=None)
@@ -20,13 +24,6 @@ def runSparkScipt(identifier, query):
 
 class DFList(Resource):
     # Returns a list of all datasets available for processing
-    """def getNot(self):
-        data = {"datasets": ["youtube.csv"]}
-        response = app.response_class(
-            response=json.dumps(data),
-            mimetype='application/json'
-        )
-        return response """
 
     def get(self):
         p1 = Popen(['hdfs', 'dfs', '-ls', '/datasets'], stdout=PIPE, stderr=PIPE)
@@ -57,12 +54,11 @@ class DFHead(Resource):
 
     def get(self, identifier):
         args = parser.parse_args()
-        tableName = identifier.split(".")[0]
-        self.sqlQuery = self.createQuery(args, tableName)
+        self.sqlQuery = self.createQuery(args, identifier)
         # return {"query": self.sqlQuery}
         
         runSparkScipt(identifier, self.sqlQuery)
-        p1 = Popen(['hdfs', 'dfs', '-ls', self.outputDir+'/'+tableName], stdout=PIPE, stderr=PIPE)
+        p1 = Popen(['hdfs', 'dfs', '-ls', self.outputDir+'/'+identifier], stdout=PIPE, stderr=PIPE)
         p2 = Popen(["grep", "-oh" ,"part\S*.json"], stdin=p1.stdout, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p2.communicate()
         output_files = stdout.decode("utf-8").split("\n")
@@ -75,7 +71,7 @@ class DFHead(Resource):
 
         rows = []
         for textfile in output_files:
-            file_url = self.outputDir+'/'+tableName+'/'+textfile
+            file_url = self.outputDir+'/'+identifier+'/'+textfile
             p = Popen(['hdfs', 'dfs', '-cat', file_url], stdout=PIPE, stderr=PIPE)
             stdout, stderr = p.communicate()
             lines = stdout.decode("utf-8").split("\n")
@@ -95,7 +91,7 @@ class DFHead(Resource):
     def getColumns(self, dataset):
         try:
             # Get first line of csv containing column names
-            f = open("%s/datasets/%s" % (os.environ['HOME'], str(dataset)))
+            f = open("%s/datasets/%s.csv" % (os.environ['HOME'], str(dataset)))
             cols = f.read().split("\n")[0]
             columns = cols.split(',')
             return columns
@@ -104,19 +100,21 @@ class DFHead(Resource):
         
     def createQuery(self, args, table):
         # Create the SQL query to be run against the dataframe
+        print(args)
         query = "SELECT "
-        if args['columns']:
-            if args['operation']:
+        if args['column']:
+            if args['operation'] and args['operation'] != 'SELECT':
                 query += args['operation'] + "("
-            for arg in args['columns']:
-                cols = arg.strip(" []")
-                query += cols
-                self.columns += cols
-            query += ") " if args['operation'] else " "
+            #for arg in args['columns']:
+            #    cols = arg.strip(" []")
+            #    query += cols
+            #    self.columns += cols
+            query += args['column']
+            query += ") " if args['operation'] and args['operation'] != 'SELECT' else " "
         else:
             query += "* "
         query += "FROM %s " % table
-        query += "LIMIT %s" % args['range']
+        query += "LIMIT %s" % args['lines']
         return query
 
 api.add_resource(DFHead, '/dataset/<string:identifier>')
