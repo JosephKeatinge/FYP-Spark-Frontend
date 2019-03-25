@@ -14,7 +14,7 @@ parser.add_argument('operation')
 parser.add_argument('column', type=str)
 parser.add_argument('columns', action='append')
 parser.add_argument('range')
-parser.add_argument('lines', default=50, type=int)
+parser.add_argument('lines', default=100, type=int)
 
 ALLOWED_OPS = {"AVG": "num", "SUM": "num", "MIN": "num", "MAX": "num", "COUNT": "any", "SELECT": "string"}
 

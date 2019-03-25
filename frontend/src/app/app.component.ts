@@ -28,6 +28,7 @@ export class AppComponent implements OnInit {
 
   public onSelect(ds: string): void {
     this.currentDataset = ds;
+    this.userCommand = null;
     // this.router.navigate(['/dataset', ds]);
   }
 

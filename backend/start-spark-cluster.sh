@@ -26,3 +26,5 @@ do
     echo "Copying file ${ds} to ${ds_dir} on HDFS"
     hdfs dfs -put "${HOME}/datasets/${ds}" "${ds_dir}"
 done 
+
+# python "/home/jsk1/FYP-Spark-Frontend/backend/spark-system/getDSInfo.py"

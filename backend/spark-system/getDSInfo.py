@@ -9,7 +9,8 @@ p2 = Popen(['grep', '-o', '[[:alnum:]]*$'], stdin=p1.stdout, stdout=PIPE, stderr
 stdout, stderr = p2.communicate()
 
 # Must split string by line break and remove unwanted results from start and end
-dsDirList = stdout.decode("utf-8").split("\n")[1:len(stdout.split("\n"))-1]
+dsDirList = stdout.decode("utf-8").split("\n")
+dsDirList = dsDirList[1:len(dsDirList)-1]
 
 for dir in dsDirList:
     dsPath = "/datasets/%s/%s.csv" % (dir, dir)

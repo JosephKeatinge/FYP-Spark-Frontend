@@ -12,8 +12,9 @@ export class AlphaValuePipe implements PipeTransform {
   transform(index: number): string {
     if (Math.floor(index / this.alphabet.length - 1) > 0) {
       let alpha = '';
-      alpha += this.alphabet[Math.floor(index / this.alphabet.length - 1)];
+      alpha += this.alphabet[Math.floor(index / (this.alphabet.length - 1))];
       alpha += this.alphabet[index];
+      return alpha;
     } else {
       return this.alphabet[index];
     }
