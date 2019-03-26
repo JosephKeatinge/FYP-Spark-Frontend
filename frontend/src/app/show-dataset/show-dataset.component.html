@@ -1,3 +1,11 @@
+<div *ngIf="dsLoaded; else chooseDs" class="alert alert-warning text-center" role="alert">
+    Currently displaying {{datasetID}} dataset.
+</div>
+<ng-template #chooseDs>
+    <div class="alert alert-warning text-center" role="alert">
+        Please select one of the above datasets to display.
+    </div>
+</ng-template>
 <app-graph-data *ngIf="showGraph" [inputtedData]="chartDisplayData"></app-graph-data>
 <div *ngIf="dsLoaded">
     <table class="table table-striped">
