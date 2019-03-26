@@ -1,9 +1,7 @@
 import { Component, OnInit, OnChanges, Input } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { ChartDataSets, ChartType } from 'chart.js';
-import { stringify } from '@angular/core/src/render3/util';
 import { Label } from 'ng2-charts';
 
 // Operations that can only be done on numbers
@@ -16,7 +14,8 @@ const OPS_REQUIRING_NUMS = ['MIN', 'MAX', 'AVG', 'SUM'];
 })
 
 export class ShowDatasetComponent implements OnInit, OnChanges {
-  dsLoaded: boolean;
+  dsLoading = false;
+  dsLoaded = false;
   showGraph: boolean;
   @Input() datasetID: string;
   @Input() userCmd: {operation: string, range: Array<string>, columns: string};
@@ -38,6 +37,7 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
     // Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
     // Add '${implements OnChanges}' to the class.
     if (this.datasetID) {
+      this.dsLoading = true;
       this.getColumnTypes();
       if (this.userCmd.operation === 'GRAPH') {
         this.chartDisplayData = this.getGraphData(this.userCmd.columns);
@@ -60,6 +60,7 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
             this.cols = res.columns;
           }
           this.rows = res.rows.map(row => JSON.parse(row));
+          this.dsLoading = false;
           this.dsLoaded = true;
         });
       } else {
@@ -71,6 +72,7 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
         this.cols = res.columns;
         this.cols = this.cols.sort();
         this.rows = res.rows.map(row => JSON.parse(row));
+        this.dsLoading = false;
         this.dsLoaded = true;
       });
     }
