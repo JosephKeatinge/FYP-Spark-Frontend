@@ -20,7 +20,7 @@ export class DataService {
     return this.http.get(apiRoot.concat('/datasets'), {headers: httpHeaders});
   }
 
-  public getColumnTypes(ds: string): Observable<object> {
+  public getColumnTypes(ds: string): Observable<any> {
     const endpoint = apiRoot.concat('/dataset/columns/' + ds);
     return this.http.get(endpoint);
   }

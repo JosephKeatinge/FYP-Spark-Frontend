@@ -7,7 +7,7 @@
     <div *ngFor="let ds of datasets">
         <button class="btn btn-warning" type="button" (click)="onSelect(ds)">{{ds}}</button>
     </div>
-    <app-command-bar class="form-inline my-2 my-lg-0" (commandEntered)="sendCmd($event)"></app-command-bar>
+    <app-command-bar class="form-inline pt-3" (commandEntered)="sendCmd($event)"></app-command-bar>
 </nav>
 <app-show-dataset [userCmd]="userCommand" [datasetID]="currentDataset"></app-show-dataset>
 
