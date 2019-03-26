@@ -27,4 +27,6 @@ do
     hdfs dfs -put "${HOME}/datasets/${ds}" "${ds_dir}"
 done 
 
+#${SPARK_HOME}/sbin/start-all.sh
+
 spark-submit --master=local[*] "/home/jsk1/FYP-Spark-Frontend/backend/spark-system/getDSInfo.py"

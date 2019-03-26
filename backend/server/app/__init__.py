@@ -4,6 +4,8 @@ from flask_cors import CORS
 from subprocess import Popen, PIPE
 import sys, os, glob
 
+SPARK_MASTER_URL="spark://cs1-09-58.ucc.ie:7077"
+
 app = Flask(__name__)
 CORS(app)
 
@@ -64,10 +66,7 @@ class DFHead(Resource):
         output_files = stdout.decode("utf-8").split("\n")
         output_files = output_files[:len(output_files)-1]
 
-        if args['columns']:
-            columns = self.columns.split(",")
-        else:
-            columns = self.getColumns(identifier)
+        columns = self.getColumns(identifier)
 
         rows = []
         for textfile in output_files:

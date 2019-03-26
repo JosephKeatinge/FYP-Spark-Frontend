@@ -54,11 +54,7 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
       if (this.isCommandValid()) {
         console.log('Fetching dataset ' + this.datasetID + ' with command ' + this.userCmd);
         this.dataService.getDataset(id, this.userCmd).subscribe(res => {
-          if (this.userCmd.columns !== '*') {
-            this.cols = [this.userCmd.columns];
-          } else {
-            this.cols = res.columns;
-          }
+          this.cols = res.columns;
           this.rows = res.rows.map(row => JSON.parse(row));
           this.dsLoading = false;
           this.dsLoaded = true;
