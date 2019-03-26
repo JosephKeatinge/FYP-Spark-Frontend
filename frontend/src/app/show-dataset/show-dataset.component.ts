@@ -2,7 +2,9 @@ import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { DataService } from '../services/data.service';
-import { Dataset } from '../models/dataset';
+import { ChartDataSets, ChartType } from 'chart.js';
+import { stringify } from '@angular/core/src/render3/util';
+import { Label } from 'ng2-charts';
 
 // Operations that can only be done on numbers
 const OPS_REQUIRING_NUMS = ['MIN', 'MAX', 'AVG', 'SUM'];
@@ -14,13 +16,14 @@ const OPS_REQUIRING_NUMS = ['MIN', 'MAX', 'AVG', 'SUM'];
 })
 
 export class ShowDatasetComponent implements OnInit, OnChanges {
-  apiPath: string;
+  dsLoaded: boolean;
+  showGraph: boolean;
   @Input() datasetID: string;
-  @Input() userCmd: {operation: string, range: Array<string>, column: string};
+  @Input() userCmd: {operation: string, range: Array<string>, columns: string};
   cols: Array<string>;
   rows: Array<any>;
-  dsLoaded = false;
   colTypes: JSON;
+  chartDisplayData: [ChartDataSets, Label[], ChartType];
 
   constructor(
     private dataService: DataService,
@@ -35,20 +38,24 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
     // Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
     // Add '${implements OnChanges}' to the class.
     if (this.datasetID) {
-      if (!this.colTypes) {
-        this.getColumnTypes();
+      this.getColumnTypes();
+      if (this.userCmd.operation === 'GRAPH') {
+        this.chartDisplayData = this.getGraphData(this.userCmd.columns);
+        this.showGraph = true;
+      } else {
+        this.showGraph = false;
+        this.getDatasetHead(this.datasetID);
       }
-      this.getDatasetHead(this.datasetID);
     }
   }
 
   public getDatasetHead(id: string): void {
-    if (this.userCmd) {
+    if (this.userCmd.operation) {
       if (this.isCommandValid()) {
         console.log('Fetching dataset ' + this.datasetID + ' with command ' + this.userCmd);
         this.dataService.getDataset(id, this.userCmd).subscribe(res => {
-          if (this.userCmd.column !== '*') {
-            this.cols = [this.userCmd.column];
+          if (this.userCmd.columns !== '*') {
+            this.cols = [this.userCmd.columns];
           } else {
             this.cols = res.columns;
           }
@@ -77,21 +84,63 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
   }
 
   public isCommandValid(): boolean {
-    if (this.userCmd.column !== '*') {
-      const colCharCode = this.userCmd.column.charCodeAt(0) - 'A'.charCodeAt(0);
+    if (this.userCmd.columns !== '*') {
+      const colCharCode = this.userCmd.columns.charCodeAt(0) - 'A'.charCodeAt(0);
       if (colCharCode >= 0 && colCharCode <= this.cols.length) {
-        this.userCmd.column = this.cols[colCharCode];
+        this.userCmd.columns = this.cols[colCharCode];
       } else {
         return false;
       }
       if (OPS_REQUIRING_NUMS.includes(this.userCmd.operation)) {
-        const colType = this.colTypes[this.userCmd.column];
-        console.log('Type of col ' + this.userCmd.column + ' is ' + colType);
+        const colType = this.colTypes[this.userCmd.columns];
+        console.log('Type of col ' + this.userCmd.columns + ' is ' + colType);
         if (colType === 'string') {
           return false;
         }
       }
     }
     return true;
+  }
+
+  public getGraphData(axis: string): [ChartDataSets, Label[], ChartType] {
+    const dataPoints = [];
+    let chartType: ChartType;
+    const chartLabels = [];
+    let xAxis: string;
+    let yAxis: string;
+    let chartName: string;
+    if (axis.length === 2) {
+      xAxis = this.cols[axis.charCodeAt(0) - 'A'.charCodeAt(0)];
+      yAxis = this.cols[axis.charCodeAt(1) - 'A'.charCodeAt(0)];
+      if (this.colTypes[xAxis] === 'string') {
+        chartType = 'bar';
+        chartName = 'Plotting ' + xAxis + '(x-axis) against ' + yAxis + '(y-axis)';
+        this.rows.forEach(function(element) {
+          chartLabels.push(element[xAxis]);
+          dataPoints.push(element[yAxis]);
+        });
+      } else if (this.colTypes[yAxis] === 'string') {
+        chartType = 'bar';
+        chartName = 'Plotting ' + yAxis + '(x-axis) against ' + xAxis + '(y-axis)';
+        this.rows.forEach(function(element) {
+          chartLabels.push(element[yAxis]);
+          dataPoints.push(element[xAxis]);
+        });
+      } else {
+        chartType = 'scatter';
+        chartName = 'Plotting ' + xAxis + '(x-axis) against ' + yAxis + '(y-axis)';
+        this.rows.forEach(function(element) {
+          const point = {x: element[xAxis], y: element[yAxis]};
+          dataPoints.push(point);
+        });
+      }
+    }
+    return [{
+      data: dataPoints,
+      label: chartName
+    },
+      chartLabels,
+      chartType
+    ];
   }
 }

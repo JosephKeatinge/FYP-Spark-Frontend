@@ -9,6 +9,7 @@ import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { CommandBarComponent } from './command-bar/command-bar.component';
 import { Globals } from './globals';
 import { AlphaValuePipe } from './pipes/alpha-value.pipe';
+import { GraphDataComponent } from './graph-data/graph-data.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { AlphaValuePipe } from './pipes/alpha-value.pipe';
     routingComponents,
     CommandBarComponent,
     AlphaValuePipe,
+    GraphDataComponent,
   ],
   imports: [
     BrowserModule,

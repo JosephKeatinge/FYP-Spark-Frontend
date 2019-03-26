@@ -3,8 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { DataService } from './services/data.service';
-import { EventEmitter } from 'selenium-webdriver';
-import { Dataset } from './models/dataset';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +13,7 @@ import { Dataset } from './models/dataset';
 export class AppComponent implements OnInit {
   datasets: string[];
   currentDataset: string;
-  userCommand: {operation: string, range: Array<string>, column: string};
+  userCommand: {operation: string, range: Array<string>, columns: string};
 
   constructor(
     private dataService: DataService,
@@ -28,11 +26,10 @@ export class AppComponent implements OnInit {
 
   public onSelect(ds: string): void {
     this.currentDataset = ds;
-    this.userCommand = null;
-    // this.router.navigate(['/dataset', ds]);
+    this.userCommand = {operation: '', range: [], columns: ''};
   }
 
-  public sendCmd(cmd: {operation: string, range: Array<string>, column: string}) {
+  public sendCmd(cmd: {operation: string, range: Array<string>, columns: string}) {
     console.log(cmd);
     this.userCommand = cmd;
   }
