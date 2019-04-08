@@ -1,5 +1,4 @@
 import { Component, OnInit, OnChanges, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { ChartDataSets, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
@@ -14,9 +13,17 @@ const OPS_REQUIRING_NUMS = ['MIN', 'MAX', 'AVG', 'SUM'];
 })
 
 export class ShowDatasetComponent implements OnInit, OnChanges {
+  /*
+  * Component for displaying a dataset as a HTML table. Initially hidden,
+  * when the datasetID variable receives a value from the app component, uses the data service
+  * to retrieve the relevant dataset and the template is updated with the received values.
+  * If userCmd is given a value, the datset is retrieved again, this time supplying userCmd
+  * as a HTTP parameter.
+  */
   dsLoading = false;
   dsLoaded = false;
   showGraph: boolean;
+  // The following two variables are given values from variables in the app component
   @Input() datasetID: string;
   @Input() userCmd: {operation: string, range: Array<string>, columns: string};
   cols: Array<string>;
@@ -26,7 +33,6 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
 
   constructor(
     private dataService: DataService,
-    private route: ActivatedRoute,
   ) {}
 
   public ngOnInit() {
@@ -50,9 +56,10 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
   }
 
   public getDatasetHead(id: string): void {
+    // Uses the data service to make an API call for the dataset corresponding to id.
+    // If the user has entered a command, this is sent as a parameter.
     if (this.userCmd.operation) {
       if (this.isCommandValid()) {
-        console.log('Fetching dataset ' + this.datasetID + ' with command ' + this.userCmd);
         this.dataService.getDataset(id, this.userCmd).subscribe(res => {
           this.cols = res.columns;
           this.rows = res.rows.map(row => JSON.parse(row));
@@ -60,10 +67,8 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
           this.dsLoaded = true;
         });
       } else {
-        console.log('incorrect command');
       }
     } else {
-      console.log('Fetching dataset ' + this.datasetID);
       this.dataService.getDataset(id).subscribe(res => {
         this.cols = res.columns;
         this.cols = this.cols.sort();
@@ -75,13 +80,16 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
   }
 
   public getColumnTypes() {
+    // Using the data service, makes an API call to retrieve the datatypes of the columns of
+    // the current dataset.
     this.dataService.getColumnTypes(this.datasetID).subscribe(res => {
       this.colTypes = JSON.parse(res);
-      console.log(this.colTypes);
     });
   }
 
   public isCommandValid(): boolean {
+    // Checks if the command entered has been supplied legal parameters, i.e. that the column(s)
+    // entered exist in the dataset
     if (this.userCmd.columns !== '*') {
       const colCharCode = this.userCmd.columns.charCodeAt(0) - 'A'.charCodeAt(0);
       if (colCharCode >= 0 && colCharCode <= this.cols.length) {
@@ -91,7 +99,6 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
       }
       if (OPS_REQUIRING_NUMS.includes(this.userCmd.operation)) {
         const colType = this.colTypes[this.userCmd.columns];
-        console.log('Type of col ' + this.userCmd.columns + ' is ' + colType);
         if (colType === 'string') {
           return false;
         }
@@ -101,6 +108,8 @@ export class ShowDatasetComponent implements OnInit, OnChanges {
   }
 
   public getGraphData(axis: string): [ChartDataSets, Label[], ChartType] {
+    // Using the rows and columns, along with their types, stored in class variables, constructs
+    // Chart.js datatypes to supply as input to the chart HTML elements.
     const dataPoints = [];
     let chartType: ChartType;
     const chartLabels = [];

@@ -13,6 +13,9 @@ const httpHeaders = new HttpHeaders()
 })
 
 export class DataService {
+  /*
+  * Service responsible for making all API calls over HTTP and returning the results as Observables.
+  */
 
   constructor(private http: HttpClient) { }
 

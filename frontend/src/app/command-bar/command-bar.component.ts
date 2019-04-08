@@ -13,6 +13,9 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
     `
 })
 export class CommandBarComponent implements OnInit {
+  /*
+  * Component associated with the user input box which is located in the app component's navbar
+  */
   errorMsg = '';
   commandOpts = [
     'MIN', 'MAX', 'AVG', 'SUM', 'COUNT', 'SELECT', 'GRAPH'
@@ -27,6 +30,8 @@ export class CommandBarComponent implements OnInit {
   }
 
   onClickCmd(cmd: string) {
+    // Called when the user clicks the execute button. The command is parsed into an object,
+    // and this is emitted as an event to the parent component.
     const parsedCmd = this.parseCommand(cmd);
     this.commandEntered.emit(parsedCmd);
   }
