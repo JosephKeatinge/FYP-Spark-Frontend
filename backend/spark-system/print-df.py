@@ -1,3 +1,8 @@
+"""
+Spark application responsible for creating a Dataframe from a dataset csv file, executing an SQL
+query on the Dataframe, and writing the result to a file. The dataset filename and the SQL query
+are supplied as parameters."""
+
 from pyspark.sql import SparkSession
 import sys
 
@@ -7,7 +12,7 @@ sql_query = sys.argv[2]
 AGGR_QUERIES = ["MIN", "MAX"]
 
 file_uri = "hdfs://localhost:9000/datasets/%s/%s.csv" % (file_title, file_title)
-spark = SparkSession.builder.appName("BasicApp").getOrCreate()
+spark = SparkSession.builder.appName("DatasetSQLQuery").getOrCreate()
 
 df = spark.read.option("header", "true").option("inferSchema", "true").csv(file_uri)
 

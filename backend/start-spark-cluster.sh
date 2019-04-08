@@ -11,9 +11,6 @@ ${HADOOP_HOME}/sbin/start-dfs.sh
 
 HDFS_DS_HOME="/datasets"
 
-#${SPARK_HOME}/sbin/start-master.sh
-#${SPARK_HOME}/sbin/start-slave.sh ${master_url}
-
 hdfs dfs -mkdir /datasets
 hdfs dfs -mkdir /output
 
@@ -27,6 +24,8 @@ do
     hdfs dfs -put "${HOME}/datasets/${ds}" "${ds_dir}"
 done 
 
-#${SPARK_HOME}/sbin/start-all.sh
+# Start the Spark cluster
+${SPARK_HOME}/sbin/start-all.sh
 
-spark-submit --master=local[*] "/home/jsk1/FYP-Spark-Frontend/backend/spark-system/getDSInfo.py"
+# Submit the application to generate JSON files with dataset columns list and their datatypes
+spark-submit --master=${master_url} "/home/jsk1/FYP-Spark-Frontend/backend/spark-system/getDSInfo.py"

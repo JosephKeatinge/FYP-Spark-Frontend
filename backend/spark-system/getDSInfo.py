@@ -1,9 +1,15 @@
+"""
+Spark application responsible for retrieving the column datatypes for each dataset in the HDFS
+and writing these values to a file, one for each dataset. They are written in JSON format to make
+parsing easier for the API object."""
+
 from pyspark.sql import SparkSession
 from subprocess import Popen, PIPE
 import os
 
 spark = SparkSession.builder.appName("GetDSInfo").getOrCreate()
 
+# Generating a list of all datasets in HDFS
 p1 = Popen(['hdfs', 'dfs', '-ls', '/datasets'], stdout=PIPE, stderr=PIPE)
 p2 = Popen(['grep', '-o', '[[:alnum:]]*$'], stdin=p1.stdout, stdout=PIPE, stderr=PIPE)
 stdout, stderr = p2.communicate()
@@ -16,7 +22,6 @@ for dir in dsDirList:
     dsPath = "/datasets/%s/%s.csv" % (dir, dir)
     dsInfoFilePath = "/home/jsk1/FYP-Spark-Frontend/backend/spark-system/ds-dtypes/%s.json" % dir
     df = spark.read.option("header", "true").option("inferSchema", "true").csv(dsPath)
-    print("################ WRITING FILE /tmp/%s ####################" % dsInfoFilePath)
     f = open(dsInfoFilePath, "w+")
     cols = df.dtypes
     numCols = len(cols)
@@ -31,7 +36,6 @@ for dir in dsDirList:
         i += 1
     f.write("}")
     f.close()
-    print("################ SUCCESSFULLY WRITTEN FILE %s ####################" % dsInfoFilePath)
 
 spark.stop()
 
